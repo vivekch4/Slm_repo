@@ -6,7 +6,7 @@ from .models import CustomUser
 from .serializers import UserSerializer, UserRegisterSerializer, UserLoginSerializer
 from django.shortcuts import render
 from rest_framework.permissions import AllowAny, IsAuthenticated
-
+from rest_framework import status
 class UserRegisterView(generics.CreateAPIView):
     queryset = CustomUser.objects.all()
     serializer_class = UserRegisterSerializer
@@ -27,7 +27,21 @@ class UserLoginView(APIView):
             "refresh": str(refresh),
             "access": str(refresh.access_token),
         })
+        
+class LogoutView(APIView):
+    permission_classes = [IsAuthenticated]
 
+    def post(self, request):
+        try:
+            refresh_token = request.data.get("refresh")
+            if not refresh_token:
+                return Response({"error": "Refresh token required"}, status=status.HTTP_400_BAD_REQUEST)
+
+            token = RefreshToken(refresh_token)
+            token.blacklist()  # blacklist the refresh token
+            return Response({"detail": "Logout successful"}, status=status.HTTP_205_RESET_CONTENT)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 class UserListView(generics.ListAPIView):
     queryset = CustomUser.objects.all()
     serializer_class = UserSerializer

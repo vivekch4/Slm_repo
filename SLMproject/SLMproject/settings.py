@@ -25,7 +25,7 @@ SECRET_KEY = "django-insecure-%a_htvvnfx_k0yi*cgmzbu0^t62$zezoyje-07*0!r)oo1rsvx
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["TechnovizSLM.pythonanywhere.com"]
 
 
 # Application definition
@@ -39,7 +39,13 @@ INSTALLED_APPS = [
     "SLMapp",
     "rest_framework",
     "accounts",
+    'rest_framework_simplejwt.token_blacklist',
 ]
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+}
 AUTH_USER_MODEL = "accounts.CustomUser"
 
 MIDDLEWARE = [
@@ -121,7 +127,26 @@ REST_FRAMEWORK = {
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = "static/"
+STATIC_URL = "/static/"
+
+# Source folders for static files (development)
+STATICFILES_DIRS = [
+    BASE_DIR / "SLMapp" / "static",  # only your app's static folder
+]
+
+# Target folder for collectstatic (production)
+STATIC_ROOT = BASE_DIR / "staticfiles"
+
+from datetime import timedelta
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(hours=8),   # 8 hours
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),   # you can adjust (default 1 day)
+    "ROTATE_REFRESH_TOKENS": False,                # optional
+    "BLACKLIST_AFTER_ROTATION": True,              # optional
+}
+
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field

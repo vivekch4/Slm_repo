@@ -621,15 +621,30 @@
       });
       
       // Handle logout click
-      const logoutBtn = document.getElementById("logoutBtn");
-      if (logoutBtn) {
-        logoutBtn.addEventListener("click", function() {
-          if (confirm("Are you sure you want to logout?")) {
-            localStorage.clear();
-            window.location.href = "/accounts/login/";
+      logoutBtn.addEventListener("click", async function() {
+        if (confirm("Are you sure you want to logout?")) {
+          const refreshToken = localStorage.getItem("refresh");
+          if (refreshToken) {
+            try {
+              await fetch("/accounts/logout/", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  "Authorization": `Bearer ${localStorage.getItem("access")}`,
+                },
+                body: JSON.stringify({ refresh: refreshToken }),
+              });
+            } catch (err) {
+              console.error("Logout failed:", err);
+            }
           }
-        });
-      }
+      
+          // Clear localStorage anyway
+          localStorage.clear();
+          window.location.href = "/";
+        }
+      });
+      
     });
   </script>
 </body>

@@ -506,7 +506,8 @@ function renderModuleContents(mainContents) {
           <div class="page-info">
             ${isPageLocked 
               ? `<span class="page-title locked-text">${pg.title || `Page ${pg.order}`}</span>`
-              : `<a href="/pages_page/${pg.id}/" class="page-title">${pg.title || `Page ${pg.order}`}}</a>`
+              : `<a href="/pages_page/${pg.id}/" class="page-title">${pg.title || `Page ${pg.order}`}</a>`
+
             }
           </div>
           <div class="page-status">

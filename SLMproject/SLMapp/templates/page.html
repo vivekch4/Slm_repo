@@ -259,7 +259,9 @@
 
 <script>
   const accessToken = localStorage.getItem("access");
+  console.log(accessToken);
   let currentPageId = parseInt(window.location.pathname.split("/")[2]);
+  console.log(currentPageId,"fsdfsksdfsd");
   let pagesList = [];
   let currentPageIndex = 0;
   let mainContentId = null; // 🔹 FIX: keep track of current main content ID
@@ -289,17 +291,21 @@
   
       if (!res.ok) throw new Error("Failed to load page");
       const page = await res.json();
+      console.log(page.content);
   
+      // ✅ Put page.content inside the iframe
       // ✅ Put page.content inside the iframe
       const iframe = document.getElementById("contentFrame");
       const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
       iframeDoc.open();
       iframeDoc.write(page.content);
-      iframe.onload = function() {
-        iframe.style.height = iframe.contentWindow.document.body.scrollHeight + "px";
-      };
-        // page.content can be full HTML
       iframeDoc.close();
+
+      // ✅ Immediately adjust height
+      setTimeout(() => {
+        iframe.style.height = iframe.contentWindow.document.body.scrollHeight + "px";
+      }, 100);
+
   
       // Store mainContentId
       mainContentId = page.main_content?.id || null;
